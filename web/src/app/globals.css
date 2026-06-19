@@ -210,6 +210,38 @@ textarea {
   line-height: 1.6;
 }
 
+.tag-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 0.5rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.tag-list li {
+  font-size: 0.8rem;
+  padding: 0.25rem 0.6rem;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+}
+
+.tag-list.matched li {
+  background: rgba(22, 163, 74, 0.15);
+  border-color: #16a34a;
+}
+
+.tag-list.unmatched li {
+  background: rgba(220, 38, 38, 0.15);
+  border-color: #dc2626;
+}
+
+.law-notes {
+  margin-top: 0.75rem;
+  font-size: 0.8rem;
+  font-style: italic;
+}
+
 .footer {
   margin-top: 2rem;
   text-align: center;

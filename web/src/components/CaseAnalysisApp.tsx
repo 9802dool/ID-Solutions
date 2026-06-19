@@ -1,9 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import type { AnalysisResult } from "@/lib/types";
-import { formatAnalysisText } from "@/lib/analysis-engine";
-import { buildCrossExamination, downloadReport, runAnalysis } from "@/lib/api";
+import type { AnalysisResult, LawMatchResult } from "@/lib/types";
+import {
+  buildCrossExamination,
+  downloadReport,
+  matchLaws,
+  runAnalysis,
+} from "@/lib/api";
 
 const OFFENCES = [
   { value: "robbery", label: "Robbery" },
@@ -21,6 +25,7 @@ export function CaseAnalysisApp() {
   const [evidence, setEvidence] = useState("");
   const [offence, setOffence] = useState("robbery");
   const [result, setResult] = useState<AnalysisResult | null>(null);
+  const [lawMatch, setLawMatch] = useState<LawMatchResult | null>(null);
   const [loading, setLoading] = useState(false);
   const [downloading, setDownloading] = useState(false);
   const [error, setError] = useState("");
@@ -33,8 +38,12 @@ export function CaseAnalysisApp() {
     setError("");
     setLoading(true);
     try {
-      const data = await runAnalysis(evidence, offence);
+      const [data, laws] = await Promise.all([
+        runAnalysis(evidence, offence),
+        matchLaws(evidence, offence),
+      ]);
       setResult(data);
+      setLawMatch(laws);
     } catch {
       setError("Analysis failed. Please try again.");
     } finally {
@@ -43,14 +52,15 @@ export function CaseAnalysisApp() {
   }
 
   async function handleDownload() {
-    if (!result) return;
+    if (!result || !lawMatch) return;
     setDownloading(true);
     try {
+      const cross = await buildCrossExamination(result);
       await downloadReport({
         evidence,
-        analysis: formatAnalysisText(result),
-        recommendations: result.recommendations.join("\n"),
-        cross: await buildCrossExamination(result),
+        analysis: result,
+        law: lawMatch,
+        cross,
       });
     } catch {
       setError("Report download failed.");
@@ -144,6 +154,50 @@ export function CaseAnalysisApp() {
                       <li key={rec}>{rec}</li>
                     ))}
                   </ul>
+                </>
+              )}
+
+              {lawMatch && (
+                <>
+                  <h3>Applicable Statutes</h3>
+                  <ul className="recommendations">
+                    {lawMatch.statutes.map((statute) => (
+                      <li key={statute}>{statute}</li>
+                    ))}
+                  </ul>
+
+                  {lawMatch.matched_elements.length > 0 && (
+                    <>
+                      <h3>Matched Elements</h3>
+                      <ul className="tag-list matched">
+                        {lawMatch.matched_elements.map((el) => (
+                          <li key={el}>{el}</li>
+                        ))}
+                      </ul>
+                    </>
+                  )}
+
+                  {lawMatch.unmatched_elements.length > 0 && (
+                    <>
+                      <h3>Unmatched Elements</h3>
+                      <ul className="tag-list unmatched">
+                        {lawMatch.unmatched_elements.map((el) => (
+                          <li key={el}>{el}</li>
+                        ))}
+                      </ul>
+                    </>
+                  )}
+
+                  <h3>Procedural Checks</h3>
+                  <ul className="recommendations">
+                    {lawMatch.procedural_checks.map((check) => (
+                      <li key={check}>{check}</li>
+                    ))}
+                  </ul>
+
+                  {lawMatch.notes && (
+                    <p className="muted law-notes">{lawMatch.notes}</p>
+                  )}
                 </>
               )}
 

@@ -13,7 +13,17 @@ export type AnalysisResult = {
 
 export type ReportPayload = {
   evidence: string;
-  analysis: string;
-  recommendations: string;
-  cross: string;
+  analysis: AnalysisResult;
+  law: LawMatchResult;
+  cross: string | { cross_examination?: string };
+};
+
+export type LawMatchResult = {
+  offence: string;
+  statutes: string[];
+  elements: string[];
+  matched_elements: string[];
+  unmatched_elements: string[];
+  procedural_checks: string[];
+  notes: string;
 };

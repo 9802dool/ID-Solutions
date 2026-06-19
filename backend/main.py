@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from routes.analysis import router as analysis_router
 from routes.cross import router as cross_router
+from routes.law_matching import router as law_matching_router
 from routes.report import router as report_router
 
 app = FastAPI(title="ID Solutions API")
@@ -16,4 +17,5 @@ app.add_middleware(
 
 app.include_router(analysis_router)
 app.include_router(cross_router)
+app.include_router(law_matching_router)
 app.include_router(report_router)

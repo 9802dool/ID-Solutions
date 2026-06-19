@@ -8,11 +8,11 @@ router = APIRouter()
 @router.post("/generate-report")
 def generate_report(payload: dict):
     evidence = payload.get("evidence", "")
-    analysis = payload.get("analysis", "")
-    recommendations = payload.get("recommendations", "")
+    analysis = payload.get("analysis", {})
+    law = payload.get("law", {})
     cross = payload.get("cross", "")
 
-    filename = generate_case_report(evidence, analysis, recommendations, cross)
+    filename = generate_case_report(evidence, analysis, law, cross)
     return FileResponse(
         filename,
         media_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document",

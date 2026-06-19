@@ -1,4 +1,4 @@
-import type { AnalysisResult, ReportPayload } from "./types";
+import type { AnalysisResult, LawMatchResult, ReportPayload } from "./types";
 
 export async function runAnalysis(
   evidenceSummary: string,
@@ -53,4 +53,36 @@ export async function buildCrossExamination(
 
   const data = await response.json();
   return data.cross_examination;
+}
+
+export async function matchLaws(
+  evidenceSummary: string,
+  offence: string
+): Promise<LawMatchResult> {
+  const response = await fetch("/api/match-laws", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ evidence_summary: evidenceSummary, offence }),
+  });
+
+  if (!response.ok) {
+    throw new Error("Law matching request failed");
+  }
+
+  return response.json();
+}
+
+export async function runFullPipeline(
+  evidenceSummary: string,
+  offence: string,
+  role: string = "officer"
+): Promise<{
+  analysis: AnalysisResult;
+  law: LawMatchResult;
+  cross: string;
+}> {
+  const law = await matchLaws(evidenceSummary, offence);
+  const analysis = await runAnalysis(evidenceSummary, offence);
+  const cross = await buildCrossExamination(analysis, role);
+  return { analysis, law, cross };
 }
