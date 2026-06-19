@@ -4,6 +4,10 @@
 
 ## Live site
 
+**Production:** https://id-solutions.vercel.app  
+**GitHub:** https://github.com/9802dool/ID-Solutions  
+**Vercel dashboard:** https://vercel.com/simeon-doolarsinghs-projects/id-solutions
+
 Deploy the `web/` Next.js app to Vercel. API routes mirror the Python FastAPI backend for serverless deployment.
 
 ## Web app (Vercel)
