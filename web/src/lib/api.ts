@@ -36,3 +36,21 @@ export async function downloadReport(data: ReportPayload): Promise<void> {
   a.click();
   window.URL.revokeObjectURL(url);
 }
+
+export async function buildCrossExamination(
+  analysis: AnalysisResult,
+  role: string = "officer"
+): Promise<string> {
+  const response = await fetch("/api/generate-cross", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ analysis, role }),
+  });
+
+  if (!response.ok) {
+    throw new Error("Cross-examination generation failed");
+  }
+
+  const data = await response.json();
+  return data.cross_examination;
+}

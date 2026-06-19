@@ -88,19 +88,3 @@ export function formatAnalysisText(result: AnalysisResult): string {
     .join("\n\n");
 }
 
-export function buildCrossExamination(result: AnalysisResult): string {
-  const weakElements = result.elements_analysis.filter(
-    (e) => e.strength === "weak" || e.strength === "medium"
-  );
-
-  if (weakElements.length === 0) {
-    return "Defence may challenge chain of custody, witness credibility, and whether each statutory element is proved beyond reasonable doubt.";
-  }
-
-  return weakElements
-    .map(
-      (e, i) =>
-        `Q${i + 1}: You agree the prosecution must prove "${e.element}" beyond reasonable doubt — can you point to the specific evidence that does so?`
-    )
-    .join("\n\n");
-}

@@ -2,11 +2,8 @@
 
 import { useState } from "react";
 import type { AnalysisResult } from "@/lib/types";
-import {
-  buildCrossExamination,
-  formatAnalysisText,
-} from "@/lib/analysis-engine";
-import { downloadReport, runAnalysis } from "@/lib/api";
+import { formatAnalysisText } from "@/lib/analysis-engine";
+import { buildCrossExamination, downloadReport, runAnalysis } from "@/lib/api";
 
 const OFFENCES = [
   { value: "robbery", label: "Robbery" },
@@ -53,7 +50,7 @@ export function CaseAnalysisApp() {
         evidence,
         analysis: formatAnalysisText(result),
         recommendations: result.recommendations.join("\n"),
-        cross: buildCrossExamination(result),
+        cross: await buildCrossExamination(result),
       });
     } catch {
       setError("Report download failed.");
