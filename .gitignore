@@ -1,0 +1,29 @@
+# dependencies
+node_modules/
+backend/node_modules/
+
+# python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# generated reports
+case_report.docx
+
+# env
+.env
+.env*.local
+
+# vercel
+.vercel
+
+# next
+web/.next/
+web/out/
+
+# OS / IDE
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
